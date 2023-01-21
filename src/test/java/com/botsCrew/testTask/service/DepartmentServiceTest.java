@@ -78,4 +78,22 @@ public class DepartmentServiceTest {
             assertThat(body.get(degree)).isEqualTo(2);
         }
     }
+
+    @Test
+    public void testGetAverageSalaryForNotExitedDepartment() {
+        Mockito.when(departmentRepository.averageSalaryByName(NOT_EXISTED_DEPARTMENT_NAME))
+                .thenReturn(Optional.empty());
+        ResponseEntity<?> response = departmentService.getAverageSalary(NOT_EXISTED_DEPARTMENT_NAME);
+        assertThat(response.getStatusCodeValue()).isEqualTo(422);
+        assertThat(response.getBody()).isEqualTo(NOT_EXISTED_DEPARTMENT_NAME_ERROR_TEXT);
+    }
+
+    @Test
+    public void testGetAverageSalaryForExitedDepartment() {
+        Mockito.when(departmentRepository.averageSalaryByName(EXISTED_DEPARTMENT_NAME))
+                .thenReturn(Optional.of(5000.0));
+        ResponseEntity<?> response = departmentService.getAverageSalary(EXISTED_DEPARTMENT_NAME);
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getBody()).isEqualTo(5000.0);
+    }
 }

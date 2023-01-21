@@ -6,6 +6,7 @@ import com.botsCrew.testTask.enums.Degree;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
@@ -13,4 +14,8 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
     Optional<Lector> findHeadOfDepartmentByName(String name);
 
     Optional<Integer> countLectorsByNameAndLectorsDegree(String name, Degree degree);
+
+    @Query("SELECT AVG(lector.salary) FROM " +
+            "(SELECT lectors as lector FROM Department department WHERE department.name = ?1)")
+    Optional<Double> averageSalaryByName(String name);
 }

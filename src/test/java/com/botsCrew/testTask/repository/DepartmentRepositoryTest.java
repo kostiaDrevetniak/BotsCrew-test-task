@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.util.HashSet;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,24 +44,26 @@ public class DepartmentRepositoryTest {
 
     @BeforeEach
     public void setUp() {
-        entityManager.clear();
-        entityManager.flush();
         for (Lector lector : LECTORS)
             entityManager.persist(lector);
         entityManager.flush();
         DEPARTMENTS.get(0).getLectors().addAll(List.of(LECTORS.get(4), LECTORS.get(0), LECTORS.get(2)));
         DEPARTMENTS.get(1).getLectors().addAll(List.of(LECTORS.get(3), LECTORS.get(1), LECTORS.get(5)));
         DEPARTMENTS.get(2).getLectors().addAll(List.of(LECTORS.get(5), LECTORS.get(0), LECTORS.get(3)));
-        for (Department department :
-                DEPARTMENTS) {
-            entityManager.persistAndFlush(department);
+        for (Department department : DEPARTMENTS) {
+            entityManager.persist(department);
         }
+        entityManager.flush();
     }
 
     @AfterEach
     public void clear() {
         LECTORS.forEach(lector -> lector.setId(0));
-        DEPARTMENTS.forEach(department -> department.setId(0));
+        DEPARTMENTS.forEach(department -> {
+            department.setId(0);
+            department.setLectors(new HashSet<>());
+        });
+        entityManager.clear();
     }
 
     @Test
@@ -74,6 +77,13 @@ public class DepartmentRepositoryTest {
         for (Degree degree : Degree.values())
             assertThat(departmentRepository
                     .countLectorsByNameAndLectorsDegree("Test department 2", degree).get()).isEqualTo(1);
+    }
+
+    @Test
+    public void testAverageSalary() {
+        double  salary = departmentRepository.averageSalaryByName("Test department 3").get();
+        double trueSalary = DEPARTMENTS.get(2).getLectors().stream().map(Lector::getSalary).reduce(Double::sum).get() / 3;
+        assertThat(salary).isEqualTo(trueSalary);
     }
 
 

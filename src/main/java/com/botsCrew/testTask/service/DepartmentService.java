@@ -45,4 +45,16 @@ public class DepartmentService {
         }
         return ResponseEntity.ok(response);
     }
+
+    public ResponseEntity<?> getAverageSalary(String departmentName) {
+        Double salary;
+        try {
+            salary = departmentRepository.averageSalaryByName(departmentName)
+                    .orElseThrow(() -> new EntityNotFoundException("Don`t found department with this name"));
+        } catch (EntityNotFoundException e) {
+            e.printStackTrace();
+            return ResponseEntity.unprocessableEntity().body(e.getLocalizedMessage());
+        }
+        return ResponseEntity.ok(salary);
+    }
 }
