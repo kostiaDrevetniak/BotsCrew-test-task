@@ -8,11 +8,13 @@ import com.botsCrew.testTask.repositoty.LectorRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.util.HashSet;
 import java.util.List;
 
 @Configuration
+@Profile({"production"})
 public class DBConfig {
     @Bean
     CommandLineRunner commandLineRunner(

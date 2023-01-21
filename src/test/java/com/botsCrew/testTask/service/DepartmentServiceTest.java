@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.anyOf;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -70,7 +69,7 @@ public class DepartmentServiceTest {
         ResponseEntity<?> response = departmentService.getDepartmentStatistic(EXISTED_DEPARTMENT_NAME);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         Map<Degree, Integer> body = (Map) response.getBody();
-        for (Degree degree:Degree.values()) {
+        for (Degree degree : Degree.values()) {
             assertThat(body.containsKey(degree)).isTrue();
             assertThat(body.get(degree)).isEqualTo(2);
         }

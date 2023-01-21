@@ -81,7 +81,7 @@ public class DepartmentRepositoryTest {
 
     @Test
     public void testAverageSalary() {
-        double  salary = departmentRepository.averageSalaryByName("Test department 3").get();
+        double salary = departmentRepository.averageSalaryByName("Test department 3").get();
         double trueSalary = DEPARTMENTS.get(2).getLectors().stream().map(Lector::getSalary).reduce(Double::sum).get() / 3;
         assertThat(salary).isEqualTo(trueSalary);
     }

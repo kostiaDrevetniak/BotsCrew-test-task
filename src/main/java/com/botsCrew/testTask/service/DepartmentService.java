@@ -38,10 +38,10 @@ public class DepartmentService {
             return ResponseEntity.unprocessableEntity().body(e.getLocalizedMessage());
         }
         Map<Degree, Integer> response = new LinkedHashMap<>();
-            for (Degree degree : Degree.values()) {
-                Integer count = departmentRepository.countLectorsByNameAndLectorsDegree(departmentName, degree);
-                response.put(degree, count);
-            }
+        for (Degree degree : Degree.values()) {
+            Integer count = departmentRepository.countLectorsByNameAndLectorsDegree(departmentName, degree);
+            response.put(degree, count);
+        }
         return ResponseEntity.ok(response);
     }
 
