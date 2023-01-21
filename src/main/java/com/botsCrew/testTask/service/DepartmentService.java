@@ -32,17 +32,16 @@ public class DepartmentService {
     }
 
     public ResponseEntity<?> getDepartmentStatistic(String departmentName) {
-        Map<Degree, Integer> response = new LinkedHashMap<>();
-        try {
-            for (Degree degree : Degree.values()) {
-                Integer count = departmentRepository.countLectorsByNameAndLectorsDegree(departmentName, degree)
-                        .orElseThrow(() -> new EntityNotFoundException("Don`t found department with this name"));
-                response.put(degree, count);
-            }
-        } catch (EntityNotFoundException e) {
+        if (!departmentRepository.existsByName(departmentName)) {
+            EntityNotFoundException e = new EntityNotFoundException("Don`t found department with this name");
             e.printStackTrace();
             return ResponseEntity.unprocessableEntity().body(e.getLocalizedMessage());
         }
+        Map<Degree, Integer> response = new LinkedHashMap<>();
+            for (Degree degree : Degree.values()) {
+                Integer count = departmentRepository.countLectorsByNameAndLectorsDegree(departmentName, degree);
+                response.put(degree, count);
+            }
         return ResponseEntity.ok(response);
     }
 
@@ -56,5 +55,14 @@ public class DepartmentService {
             return ResponseEntity.unprocessableEntity().body(e.getLocalizedMessage());
         }
         return ResponseEntity.ok(salary);
+    }
+
+    public ResponseEntity<?> getEmployeeCount(String departmentName) {
+        if (!departmentRepository.existsByName(departmentName)) {
+            EntityNotFoundException e = new EntityNotFoundException("Don`t found department with this name");
+            e.printStackTrace();
+            return ResponseEntity.unprocessableEntity().body(e.getLocalizedMessage());
+        }
+        return ResponseEntity.ok(departmentRepository.countLectorsByName(departmentName));
     }
 }

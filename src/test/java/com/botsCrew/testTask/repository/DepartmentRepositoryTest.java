@@ -76,7 +76,7 @@ public class DepartmentRepositoryTest {
     public void testCountLectors() {
         for (Degree degree : Degree.values())
             assertThat(departmentRepository
-                    .countLectorsByNameAndLectorsDegree("Test department 2", degree).get()).isEqualTo(1);
+                    .countLectorsByNameAndLectorsDegree("Test department 2", degree)).isEqualTo(1);
     }
 
     @Test
@@ -86,5 +86,14 @@ public class DepartmentRepositoryTest {
         assertThat(salary).isEqualTo(trueSalary);
     }
 
+    @Test
+    public void testExistByName() {
+        assertThat(departmentRepository.existsByName("Test department 1")).isTrue();
+        assertThat(departmentRepository.existsByName("Not existed")).isFalse();
+    }
 
+    @Test
+    public void testLectorsCount() {
+        assertThat(departmentRepository.countLectorsByName("Test department 2")).isEqualTo(3);
+    }
 }

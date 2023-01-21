@@ -3,16 +3,12 @@ package com.botsCrew.testTask.service;
 import com.botsCrew.testTask.entity.Lector;
 import com.botsCrew.testTask.enums.Degree;
 import com.botsCrew.testTask.repositoty.DepartmentRepository;
-import com.botsCrew.testTask.service.DepartmentService;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Map;
@@ -58,18 +54,19 @@ public class DepartmentServiceTest {
     }
 
     @Test
-    public void tesGetDepartmentStatisticForNotExistedDepartment() {
-        Mockito.when(departmentRepository.countLectorsByNameAndLectorsDegree(eq(EXISTED_DEPARTMENT_NAME), any(Degree.class)))
-                .thenReturn(Optional.empty());
+    public void testGetDepartmentStatisticForNotExistedDepartment() {
+        Mockito.when(departmentRepository.existsByName(NOT_EXISTED_DEPARTMENT_NAME))
+                .thenReturn(false);
         ResponseEntity<?> response = departmentService.getDepartmentStatistic(NOT_EXISTED_DEPARTMENT_NAME);
         assertThat(response.getStatusCodeValue()).isEqualTo(422);
         assertThat(response.getBody()).isEqualTo(NOT_EXISTED_DEPARTMENT_NAME_ERROR_TEXT);
     }
 
     @Test
-    public void tesGetDepartmentStatisticForExistedDepartment() {
+    public void testGetDepartmentStatisticForExistedDepartment() {
         Mockito.when(departmentRepository.countLectorsByNameAndLectorsDegree(eq(EXISTED_DEPARTMENT_NAME), any(Degree.class)))
-                .thenReturn(Optional.of(2));
+                .thenReturn(2);
+        Mockito.when(departmentRepository.existsByName(EXISTED_DEPARTMENT_NAME)).thenReturn(true);
         ResponseEntity<?> response = departmentService.getDepartmentStatistic(EXISTED_DEPARTMENT_NAME);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         Map<Degree, Integer> body = (Map) response.getBody();
@@ -95,5 +92,24 @@ public class DepartmentServiceTest {
         ResponseEntity<?> response = departmentService.getAverageSalary(EXISTED_DEPARTMENT_NAME);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo(5000.0);
+    }
+
+    @Test
+    public void testGetEmployeeForNotExistedDepartment() {
+        Mockito.when(departmentRepository.existsByName(NOT_EXISTED_DEPARTMENT_NAME))
+                .thenReturn(false);
+        ResponseEntity<?> response = departmentService.getEmployeeCount(NOT_EXISTED_DEPARTMENT_NAME);
+        assertThat(response.getStatusCodeValue()).isEqualTo(422);
+        assertThat(response.getBody()).isEqualTo(NOT_EXISTED_DEPARTMENT_NAME_ERROR_TEXT);
+    }
+
+    @Test
+    public void testGetEmployeeCountForExistedDepartment() {
+        Mockito.when(departmentRepository.countLectorsByName(EXISTED_DEPARTMENT_NAME))
+                .thenReturn(5);
+        Mockito.when(departmentRepository.existsByName(EXISTED_DEPARTMENT_NAME)).thenReturn(true);
+        ResponseEntity<?> response = departmentService.getEmployeeCount(EXISTED_DEPARTMENT_NAME);
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        assertThat(response.getBody()).isEqualTo(5);
     }
 }

@@ -13,9 +13,14 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
     @Query("SELECT department.headOfDepartment FROM Department department WHERE department.name = ?1")
     Optional<Lector> findHeadOfDepartmentByName(String name);
 
-    Optional<Integer> countLectorsByNameAndLectorsDegree(String name, Degree degree);
+    Integer countLectorsByNameAndLectorsDegree(String name, Degree degree);
 
     @Query("SELECT AVG(lector.salary) FROM " +
             "(SELECT lectors as lector FROM Department department WHERE department.name = ?1)")
     Optional<Double> averageSalaryByName(String name);
+
+    @Query("SELECT COUNT(lector.id) FROM (SELECT lectors as lector FROM Department department WHERE department.name = ?1)")
+    Integer countLectorsByName(String name);
+
+    boolean existsByName(String name);
 }

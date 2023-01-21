@@ -31,4 +31,9 @@ public class DepartmentController {
     public ResponseEntity<?> getAverageSalary(@RequestParam("name") String departmentName) {
         return departmentService.getAverageSalary(departmentName);
     }
+
+    @GetMapping("/count")
+    public ResponseEntity<?> getEmployeeCount(@RequestParam("name") String departmentName) {
+        return departmentService.getEmployeeCount(departmentName);
+    }
 }
