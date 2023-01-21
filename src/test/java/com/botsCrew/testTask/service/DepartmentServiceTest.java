@@ -1,4 +1,4 @@
-package com.botsCrew.testTask.repository.service;
+package com.botsCrew.testTask.service;
 
 import com.botsCrew.testTask.entity.Lector;
 import com.botsCrew.testTask.enums.Degree;

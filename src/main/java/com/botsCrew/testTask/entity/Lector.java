@@ -2,6 +2,7 @@ package com.botsCrew.testTask.entity;
 
 import com.botsCrew.testTask.enums.Degree;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class Lector {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +27,15 @@ public class Lector {
     private double salary;
     @ManyToMany(mappedBy = "lectors")
     private Set<Department> departments;
-    @OneToOne(mappedBy = "headOfDepartment")
-    private Department headedDepartment;
 
     public Lector(long id, String name, Degree degree, double salary) {
         this.id = id;
+        this.name = name;
+        this.degree = degree;
+        this.salary = salary;
+    }
+
+    public Lector(String name, Degree degree, double salary) {
         this.name = name;
         this.degree = degree;
         this.salary = salary;
