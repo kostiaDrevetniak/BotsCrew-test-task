@@ -18,7 +18,12 @@ public class DepartmentController {
     }
 
     @GetMapping("/head")
-    public ResponseEntity<?> getHeadOfDepartment(@RequestParam String departmentName) {
+    public ResponseEntity<?> getHeadOfDepartment(@RequestParam("mame") String departmentName) {
         return departmentService.getHeadOfDepartment(departmentName);
+    }
+
+    @GetMapping("/statistic")
+    public ResponseEntity<?> getDepartmentStatistic(@RequestParam("name") String departmentName) {
+        return departmentService.getDepartmentStatistic(departmentName);
     }
 }

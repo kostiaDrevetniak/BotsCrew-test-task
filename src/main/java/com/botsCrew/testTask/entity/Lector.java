@@ -26,6 +26,7 @@ public class Lector {
     @Column(nullable = false)
     private double salary;
     @ManyToMany(mappedBy = "lectors")
+    @EqualsAndHashCode.Exclude
     private Set<Department> departments;
 
     public Lector(long id, String name, Degree degree, double salary) {

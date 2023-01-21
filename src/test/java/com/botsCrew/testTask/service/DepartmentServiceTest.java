@@ -6,6 +6,7 @@ import com.botsCrew.testTask.repositoty.DepartmentRepository;
 import com.botsCrew.testTask.service.DepartmentService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,9 +15,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Map;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.anyOf;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -35,7 +40,7 @@ public class DepartmentServiceTest {
     private DepartmentRepository departmentRepository;
 
     @Test
-    public void testGetHeadOfDepartmentForNotExitedName() {
+    public void testGetHeadOfDepartmentForNotExitedDepartment() {
         Mockito.when(departmentRepository.findHeadOfDepartmentByName(NOT_EXISTED_DEPARTMENT_NAME))
                 .thenReturn(Optional.empty());
         ResponseEntity<?> response = departmentService.getHeadOfDepartment(NOT_EXISTED_DEPARTMENT_NAME);
@@ -44,11 +49,33 @@ public class DepartmentServiceTest {
     }
 
     @Test
-    public void testGetHeadOfDepartmentForExitedName() {
+    public void testGetHeadOfDepartmentForExitedDepartment() {
         Mockito.when(departmentRepository.findHeadOfDepartmentByName(EXISTED_DEPARTMENT_NAME))
                 .thenReturn(Optional.of(HEAD_OF_DEPARTMENT));
         ResponseEntity<?> response = departmentService.getHeadOfDepartment(EXISTED_DEPARTMENT_NAME);
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo(HEAD_OF_DEPARTMENT_NAME);
+    }
+
+    @Test
+    public void tesGetDepartmentStatisticForNotExistedDepartment() {
+        Mockito.when(departmentRepository.countLectorsByNameAndLectorsDegree(eq(EXISTED_DEPARTMENT_NAME), any(Degree.class)))
+                .thenReturn(Optional.empty());
+        ResponseEntity<?> response = departmentService.getDepartmentStatistic(NOT_EXISTED_DEPARTMENT_NAME);
+        assertThat(response.getStatusCodeValue()).isEqualTo(422);
+        assertThat(response.getBody()).isEqualTo(NOT_EXISTED_DEPARTMENT_NAME_ERROR_TEXT);
+    }
+
+    @Test
+    public void tesGetDepartmentStatisticForExistedDepartment() {
+        Mockito.when(departmentRepository.countLectorsByNameAndLectorsDegree(eq(EXISTED_DEPARTMENT_NAME), any(Degree.class)))
+                .thenReturn(Optional.of(2));
+        ResponseEntity<?> response = departmentService.getDepartmentStatistic(EXISTED_DEPARTMENT_NAME);
+        assertThat(response.getStatusCodeValue()).isEqualTo(200);
+        Map<Degree, Integer> body = (Map) response.getBody();
+        for (Degree degree:Degree.values()) {
+            assertThat(body.containsKey(degree)).isTrue();
+            assertThat(body.get(degree)).isEqualTo(2);
+        }
     }
 }
